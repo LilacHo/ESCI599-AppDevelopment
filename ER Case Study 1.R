@@ -7,12 +7,20 @@ library(forcats)
 library(vroom)
 library(shiny)
 
-# check to see if the data exist in the environment
-if (!exists("injuries")) {
-  injuries <- vroom::vroom("neiss/injuries.tsv.gz")
-  products <- vroom::vroom("neiss/products.tsv")
-  population <- vroom::vroom("neiss/population.tsv")
+# get the data from the original place so I don't need to attach files
+download <- function(name) {
+  url <- "https://github.com/hadley/mastering-shiny/raw/master/neiss/"
+  download.file(paste0(url, name), paste0("neiss/", name), quiet = TRUE)
 }
+download("injuries.tsv.gz") #gzip file. `vroom` will read it. 
+download("population.tsv")
+download("products.tsv")
+
+# read data in
+injuries <- vroom::vroom("neiss/injuries.tsv.gz")
+products <- vroom::vroom("neiss/products.tsv")
+population <- vroom::vroom("neiss/population.tsv")
+
 
 
 # code to get the products for filtering
@@ -49,6 +57,7 @@ ui <- fluidPage(
     column(12, plotOutput("age_sex"))
   ),
   fluidRow(
+    # action button for "tell a story"
     column(2, actionButton("story", "Tell me a story")),
     column(10, textOutput("narrative"))
   )
@@ -57,6 +66,7 @@ ui <- fluidPage(
 
 #<< server
 server <- function(input, output, session) {
+  # output tables
   output$diag <- renderTable(count_top(selected(), diag), width = "100%")
   output$body_part <- renderTable(count_top(selected(), body_part), width = "100%")
   output$location <- renderTable(count_top(selected(), location), width = "100%")
