@@ -22,9 +22,9 @@ products <- vroom::vroom("neiss/products.tsv")
 population <- vroom::vroom("neiss/population.tsv")
 
 
-
 # code to get the products for filtering
 prod_codes <- setNames(products$prod_code, products$title)
+
 
 # useful factor lumping function
 count_top <- function(df, var, n = 5) {
@@ -33,6 +33,7 @@ count_top <- function(df, var, n = 5) {
     group_by({{ var }}) %>%
     summarise(n = as.integer(sum(weight)))
 }
+
 
 #<< ui
 ui <- fluidPage(
@@ -63,6 +64,7 @@ ui <- fluidPage(
   )
 )
 #>>
+
 
 #<< server
 server <- function(input, output, session) {
