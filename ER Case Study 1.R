@@ -68,6 +68,9 @@ ui <- fluidPage(
 
 #<< server
 server <- function(input, output, session) {
+  # make a reactive to select a product code
+  selected <- reactive(injuries %>% filter(prod_code == input$code))
+  
   # output tables
   output$diag <- renderTable(count_top(selected(), diag), width = "100%")
   output$body_part <- renderTable(count_top(selected(), body_part), width = "100%")
